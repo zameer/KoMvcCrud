@@ -15,26 +15,40 @@ function BlogViewModel() {
     var self = this;
 
     self.BlogId = ko.observable();
-    self.Name = ko.observable();
-    self.Url = ko.observable();
+    self.Name = ko.observable().extend({ required: { message: "Please enter Name", params: true} });
+    self.Url = ko.observable().extend({ required: { message: "Please enter URL", params: true }, number: true, min: 0, max: 100 });
 
     self.Blogs = ko.observableArray([]);
 
+    self.blogErrors = ko.validation.group({ Name: self.Name, Url: self.Url });
+    //self.validationModel = ko.validatedObservable({ Name: self.Name, Url: self.Url });
+    
     self.AddBlog = function () {
+        var isValid = true;
+        if (self.blogErrors().length != 0) {
+            self.blogErrors.showAllMessages();
+            isValid = false;
+        }
 
-        var _blog = new Blog({
-            BlogId: self.BlogId(),
-            Name: self.Name(),
-            Url: self.Url()
-        });
+        //if (self.validationModel.isValid())
+        if (isValid)  {
+            var _blog = new Blog({
+                BlogId: self.BlogId(),
+                Name: self.Name(),
+                Url: self.Url()
+            });
 
-        $.post("Contact/Save", _blog, function (result) {
-            self.Blogs.push(result);
-        })
+            $.post("Blogging/Save", _blog, function (result) {
+                self.Blogs.push(result);
+            })
 
-        self.BlogId("");
-        self.Name("");
-        self.Url("");
+            self.BlogId("");
+            self.Name("");
+            self.Url("");
+        }
+//        else {
+//            self.validationModel.showAllMessages(); 
+//        }
     };
 
     self.RemoveBlog = function (blog) {
