@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Blogging.Web.Models;
 
-
+//http://msdn.microsoft.com/en-us/data/ee712907
 namespace Blogging.Web.Controllers
 {
     public class ContactController : Controller
